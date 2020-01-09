@@ -1,4 +1,5 @@
-# Rapid-Hybrid-Learning-for-Visual-Inspection
+# Rapid-Hybrid-Learning-for-Visual-Inspection (RHL)
+# 1- Introduction
 Most of the natural material inspection systems suffer by frequently changes in visual appearance between batches of production. Moreover, there are some visual sorting problems that collecting and labeling numerous training samples require destructive tests. Thous problems are including wood strength estimation, metal ductility fracture prediction, prediction of structural failure (e.g. prediction of wind turbine emergency stop) and etc. Hence, training with a huge amount of labeled samples is not feasible from time and cost efficiency point of view. 
 
 The appearance variations of natural materials such as building stone tiles, wooden boards, and medical samples against the original training materials tend to decrease the classification performance. Repeatedly collecting and labeling complete representative sample sets is a tedious effort that usually limits the accuracy and consequently the efficiency of the visual inspection system. 

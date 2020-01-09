@@ -12,7 +12,7 @@ This post is an explanation of the developed RHL which has been successfully app
 We implemented the RHL in two major phase. First; an off-line unsupervised approach to build a powerful representation and dimension reduction tool. Second; an on-line supervised classifier training approach by employing active learning with uncertainty sampling. The proposed approach enables classifier to learn the category distribution space incrementally with new critical samples (which are close to the category boundaries), while it is performing the classification process on stream of data.
 
 The developed algorithm of RHL consist of below steps.
-\begin{itemize}
+begin{itemize}
     \item Loading and normalizing data
     \item Representation learning using Convolutional Auto-Encoder (CAE)
     \item Demonstration and evaluation of representation learning using human vision and UMAP

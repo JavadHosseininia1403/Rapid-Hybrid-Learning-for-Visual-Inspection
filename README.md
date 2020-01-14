@@ -452,6 +452,59 @@ We used the hover method to open each sample in the UMAP output and visualise th
 
  *** code
  
+    def hover(event):
+        # if the mouse is over the scatter points
+        if points.contains(event)[0]:
+            # find out the index within the array from the event
+            inds = points.contains(event)[1]["ind"]
+            ind = inds[0]
+            # get the figure size
+            w,h = fig.get_size_inches()*fig.dpi
+            ws = (event.x > w/2.)*-1 + (event.x <= w/2.) 
+            hs = (event.y > h/2.)*-1 + (event.y <= h/2.)
+            # if event occurs in the top or right quadrant of the figure,
+            # change the annotation box position relative to mouse.
+            ab.xybox = (xybox[0]*ws, xybox[1]*hs)
+        # make annotation box visible
+            ab.set_visible(True)
+            # place it at the position of the hovered scatter point
+            ab.xy =(x1[ind], x2[ind])
+            # set the image corresponding to that point
+            im.set_data(arr[ind,:,:])
+        else:
+            #if the mouse is not over a scatter point
+            ab.set_visible(False)
+        fig.canvas.draw_idle()
+    
+    # Changing the "Graphics backend" to qt5
+    %matplotlib qt5
+    from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+    get_ipython().run_line_magic('matplotlib', 'qt')
+
+    plt.figure()
+    fig = plt.figure(figsize=(12,9))
+    ax = plt.gca()
+    x1 = embedding_test[:, 0]
+    x2 = embedding_test[:, 1]
+    points = plt.scatter(x1, x2, c=x_test_prob_predicted, cmap='Spectral', s=2)
+
+    plt.gca().set_aspect('equal', 'datalim')
+    plt.colorbar(boundaries=np.arange(np.shape(n_class)[0]+1)-0.5).set_ticks(np.arange(np.shape(n_class)[0]))
+    plt.title('UMAP projection of the dataset', fontsize=16)
+
+    arr = Xt_labeled[:,:,:,0]
+    im = OffsetImage(arr[0,:,:], zoom=1)
+
+    xybox=(50., 50.)
+    ab = AnnotationBbox(im, (0,0), xybox=xybox, xycoords='data',
+        boxcoords="offset points",  pad=0.3,  arrowprops=dict(arrowstyle="->",color='k'))
+    ax.add_artist(ab)
+    ab.set_visible(False)
+    fig.canvas.mpl_connect('motion_notify_event', hover)
+    plt.show()
+    #%%
+    %matplotlib inline
+ 
 ---------------------------------------------------------------------------------------------------------------------------------
 
 

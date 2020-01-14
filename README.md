@@ -58,30 +58,29 @@ Each set of data is selected in a random manner and all are independent to each 
 
 Import data sets.
 
-Xu normalization and presentation of one image;
+Below function converts original images to one-channel of normalized and reshaped images separatly for each one of dataset;
 
-    Xu = []
-    for i in range(1000):
-        image = Xu_C0[i]
-        image = image.astype(np.float32)
-        image = image[:,:,0]              # Red channel extraction
-
-        image = cv2.normalize(image, None, 0, 1, norm_type=cv2.NORM_MINMAX,dtype=cv2.CV_32F)        # Image normalization
-        Xu.append(image)
+    def convert_images(images, num_images, output_shape):
     
-    im =  Xu[259]
-    plt.figure()
-    plt.imshow(im)
-    plt.gray()
-    plt.grid()
-    plt.show()
-    # Data reshaping for convolutional auto-encoder
-    Xu = np.reshape(np.array(Xu), (np.shape(Xu)[0],48,112,1)) 
+        #This function converts original images to one-channel normalized and reshaped images
     
-X\textsuperscript{t} normalization and presentation of one image
-x\textsuperscript{l} normalization and presentation of one image
-X\textsuperscript{s} normalization and presentation of one image
-
+        converted_images = []
+        for i in range(num_images):
+            image = images[i]
+            image = image.astype(np.float32)
+            image = image[:,:,0]              # Red channel extraction
+            image = cv2.normalize(image, None, 0, 1, norm_type=cv2.NORM_MINMAX,dtype=cv2.CV_32F)
+            converted_images.append(image)
+        converted_images = np.array(converted_images)
+        plt.figure()
+        plt.imshow(converted_images[0])
+        #plt.title("One sample of ")
+        plt.gray()
+        plt.grid()
+        plt.show()
+        converted_images = np.reshape(converted_images, (num_images, output_shape[0], output_shape[1], output_shape[2]))
+        return converted_images
+    
 # 2.2- Representation learning
 The main objective of the RHL is diminishing human involvements in training a visual inspection systems. Therefore, a convolutional auto-encoder has been used to learn data representation in an unsupervised manner.
 
@@ -93,30 +92,31 @@ In this phase, a feature extractor has been developed using the encoder part of 
 
 Below code shows the structure, parameters, optimiser and loss function of the employed convolutional auto-encoder;
 
-    # The structure of convolutional autoencoder, optimizer and loss function 
-    Input = layers.Input(shape=(48,112,1))
-    conv1 = layers.Conv2D(8, 3 , activation='relu', padding='same', strides=2)(Input)
+    def create_autoencoder_model():
+        """
+        This function creates convolutional autoencoder model
+        """
+        Input = layers.Input(shape=(48,112,1))
+        conv1 = layers.Conv2D(8, 3 , activation='relu', padding='same', strides=2)(Input)
+        conv2 = layers.Conv2D(4, 3 , activation='relu', padding='same', strides=1)(conv1)
+        encode = layers.MaxPool2D(pool_size=2)(conv2)
+        up1 = layers.UpSampling2D((2,2))(encode)
+        deconv1 = layers.Conv2D(4, 3 , activation='relu', padding='same', strides=1)(up1)
+        up2 = layers.UpSampling2D((2,2))(deconv1)
+        deconv2 = layers.Conv2D(8, 3 , activation='relu', padding='same', strides=1)(up2)
+        deconv3 = layers.Conv2D(1, 3 , activation='sigmoid', padding='same', strides=1)(deconv2)
+        encoder = Model(Input, encode)
+        autoencoder = Model(Input, deconv3)
+        return encoder, autoencoder
+        
+    # Prepairing datasets using convert_images function;
+    Xu = convert_images(Xu_C0, 1000, (48,112,1))
+    Xt = convert_images(Xt_labeled, 1000, (48,112,1))
+    xl = convert_images(xl_labeled, 50, (48,112,1))
+    Xs = convert_images(Xs_labeled, 8000, (48,112,1))
 
-    conv2 = layers.Conv2D(4, 3 , activation='relu', padding='same', strides=1)(conv1)
-
-    encode = layers.MaxPool2D(pool_size=2)(conv2)
-
-    up1 = layers.UpSampling2D((2,2))(encode)
-
-    deconv1 = layers.Conv2D(4, 3 , activation='relu', padding='same', strides=1)(up1)
-
-    up2 = layers.UpSampling2D((2,2))(deconv1)
-
-    deconv2 = layers.Conv2D(8, 3 , activation='relu', padding='same', strides=1)(up2)
-
-    deconv3 = layers.Conv2D(1, 3 , activation='sigmoid', padding='same', strides=1)(deconv2)
-
-    encoder = Model(Input, encode)
-
-    autoencoder = Model(Input, deconv3)
-
-    autoencoder.compile(keras.optimizers.Adam(), 
-        loss=keras.losses.MSE, metrics=[ "accuracy","categorical_accuracy"])
+    encoder, autoencoder = create_autoencoder_model()
+    autoencoder.compile(keras.optimizers.Adam(), loss=keras.losses.MSE, metrics=[ "accuracy","categorical_accuracy"])
 
     # Training the network
     autoencoder.fit(Xu, Xu, batch_size=20,epochs=450, validation_split=0.1) 

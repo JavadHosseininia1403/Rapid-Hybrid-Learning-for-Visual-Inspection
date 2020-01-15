@@ -156,7 +156,7 @@ For reconstruction evaluation through human point of view, below codes select so
         
 
 ![](Images/Reconstructed.jpg)
-FIGURE 1; Original images and respective reconstructed samples using Convolutional auto-encoder
+Figure 1; Original images and respective reconstructed samples using Convolutional auto-encoder
 
 
 The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
@@ -179,7 +179,7 @@ To evaluate the discrimination power of the representation learning built with i
     plt.show() 
     
 ![](Images/Umap1.png)
-FIGURE 2; UMAP category representation (a 2D visualization of represented data)
+Figure 2; UMAP category representation (a 2D visualization of represented data)
 
 
 # 2.3- On-line supervised training with uncertainty sampling
@@ -421,7 +421,7 @@ To illustrate the performance of the uncertainty sampling, below code demonstrat
     plt.show()
     
 ![](Images/UncertainSamples.png)
-FIGURE 3; UMAP representation of selected uncertain samples and test data set
+Figure 3; UMAP representation of selected uncertain samples and test data set
 
 
 # 3.2- Classifier evaluation
@@ -503,6 +503,6 @@ We used the hover method to open each sample in the UMAP output and visualise th
     %matplotlib inline
 
 ![](Images/RFErrors.png)
-FIGURE 4; RF errors; a; Wrong assigned class for defected sample, b; Wrong  assigned class for defectless sample
+Figure 4; RF errors; a; Wrong assigned class for defected sample, b; Wrong  assigned class for defectless sample
 
 

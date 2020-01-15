@@ -156,8 +156,6 @@ For reconstruction evaluation through human point of view, below codes select so
         
 
 
-![](Images/Reconstructed.jpg)
-FIGURE 1; Original images and respective reconstructed samples using Convolutional auto-encoder
 
 The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
 

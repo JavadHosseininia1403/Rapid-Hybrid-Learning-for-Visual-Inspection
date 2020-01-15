@@ -230,8 +230,6 @@ The on-line phase of the RHL algorithm consist of below steps:
      
 Note that below code will display some previously queried samples by human operator. This enables the operator to have a glimpse on earlier samples and decide about new uncertain sample, or even change previous classifications if necessary. 
 
-----------------------------------------------------------------------------------------------------------------------------------
-
     while n_query >= 0:
         
         if initial_index == 0:
@@ -429,7 +427,6 @@ FIGURE 3; UMAP representation of selected uncertain samples and test data set
 # 3.2- Classifier evaluation
 To evaluate the performance of the classifier we used remaining samples of X<sup>s</sup> with their ground truth labels. Below code predicts the labels of remaining X<sup>s</sup> using trained classifier and shows the F1 score. 
 
---------------------------------------------------------------------------------------------------------------------------------
 
       #                               Test with remaining samples of Xs 
 
@@ -447,13 +444,8 @@ To evaluate the performance of the classifier we used remaining samples of X<sup
       plt.ylabel("predicted value")
       plt.show()
  
----------------------------------------------------------------------------------------------------------------------------------
-
-
 # 3.3 Classifier analysis by visualising each sample
 We used the hover method to open each sample in the UMAP output and visualise the original image related to the sample. This has done to analysis samples that might be incorrectly categorized with classifier or even samples that might be incorrectly labeled with human. This solution enables operator to have more analysis on the outputs. 
-
---------------------------------------------------------------------------------------------------------------------------------
 
  *** code
  
@@ -510,6 +502,4 @@ We used the hover method to open each sample in the UMAP output and visualise th
     #%%
     %matplotlib inline
  
----------------------------------------------------------------------------------------------------------------------------------
-
 

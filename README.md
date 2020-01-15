@@ -503,6 +503,6 @@ We used the hover method to open each sample in the UMAP output and visualise th
     %matplotlib inline
 
 ![](Images/RFErrors.png)
-FIGURE 2; RF errors; a; Wrong assigned class for defected sample, b; Wrong  assigned class for defectless sample
+FIGURE 4; RF errors; a; Wrong assigned class for defected sample, b; Wrong  assigned class for defectless sample
 
 

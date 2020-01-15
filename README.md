@@ -13,12 +13,12 @@ We implemented the RHL in two major phase. First; an off-line unsupervised appro
 
 The developed algorithm of RHL consist of below steps.
 
-    * Loading and normalizing data
-    * Representation learning using Convolutional Auto-Encoder (CAE)
-    * Demonstration and evaluation of representation learning using human vision and UMAP
-    * Initial training of the random forest classifier
-    * Uncertainty sampling, and classifying samples (with no uncertainty in category) in data stream 
-    * Performance evaluation 
+   * Loading and normalizing data
+   * Representation learning using Convolutional Auto-Encoder (CAE)
+   * Demonstration and evaluation of representation learning using human vision and UMAP
+   * Initial training of the random forest classifier
+   * Uncertainty sampling, and classifying samples (with no uncertainty in category) in data stream 
+   * Performance evaluation 
 
 We will discuss each step of RHL and present Python cods in detail in later sections
 

@@ -47,12 +47,12 @@ We will discuss each step of RHL and present Python cods in detail in later sect
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
     %matplotlib inline
 
-Based on industrial operation problem, we split whole 10 000 pencil slat samples to four separate data sets. Those are include (each one will describe later in relevant section)
+Based on industrial operation problem, we split whole 10 000 pencil slat samples to four separate data sets. Those are include (each one will describe later in relevant section) 
 
-    * Less than 1000 unlabeled samples that selected among the majority class of data, X\textsuperscript{u}.
-    * 1000 labeled samples X\textsuperscript{t}
-    * Small initial training set x\textsuperscript{l} include 50 labeled samples. Two samples per each category will select in a random manner to establish the categories for classifier.  
-    * 8 000 labeled instances as a stream of samples X\textsuperscript{s} for uncertainty sampling / classification, and final evaluations.
+   * Less than 1000 unlabeled samples that selected among the majority class of data, X<sup>u</sup>.
+   * 1000 labeled samples X<sup>t</sup> 
+   * Small initial training set x<sup>l</sup> include 50 labeled samples. Two samples per each category will select in a random manner to establish the categories for classifier.  
+   * 8 000 labeled instances as a stream of samples X<sup>s</sup> for uncertainty sampling / classification, and final evaluations.
 
 Each set of data is selected in a random manner and all are independent to each other. Below codes are used for importing data sets, extracting the red channel of images, normalizing, and preparing the shape of samples for convoutional auto-encoder.
 
@@ -86,9 +86,9 @@ The main objective of the RHL is diminishing human involvements in training a vi
 
 In this step, the goal is learning data features and reconstructing the original inputs from the features, Then utilizing the encoder part of convolutional auto-encoder as a feature extractor to represent the data features in a low dimensional space. 
 
-This step of the algorithm is an unsupervised process, therefore we provided an unlabeled set of training samples (X\textsuperscript{U}) that consist of 1000 samples which were selected from the majority class of data (both balanced and highly imbalanced data sets have been used in representation learning phase to analysis the penalty rate, Please see the original paper). Note that, based on the experiments, less than 1000 highly imbalanced training samples is enough for an efficient data representation and acceptable final accuracy, although it cause a minor penalty on the final accuracy.  
+This step of the algorithm is an unsupervised process, therefore we provided an unlabeled set of training samples (X<sup>u</sup>) that consist of 1000 samples which were selected from the majority class of data (both balanced and highly imbalanced data sets have been used in representation learning phase to analysis the penalty rate, Please see the original paper). Note that, based on the experiments, less than 1000 highly imbalanced training samples is enough for an efficient data representation and acceptable final accuracy, although it cause a minor penalty on the final accuracy.  
 
-In this phase, a feature extractor has been developed using the encoder part of convolutional auto-encoder. The feature extractor unit utilizes in both off-line (for evaluation of representation learning using X\textsuperscript{t}) and on-line (for supervised learning and final evaluation) phases. 
+In this phase, a feature extractor has been developed using the encoder part of convolutional auto-encoder. The feature extractor unit utilizes in both off-line (for evaluation of representation learning using X<sup>t</sup>) and on-line (for supervised learning and final evaluation) phases. 
 
 Below code shows the structure, parameters, optimiser and loss function of the employed convolutional auto-encoder;
 
@@ -122,9 +122,9 @@ Below code shows the structure, parameters, optimiser and loss function of the e
     autoencoder.fit(Xu, Xu, batch_size=20,epochs=450, validation_split=0.1) 
     
 # 2.2.1- Demonstration and evaluation of power of representation learning
-The labeled data set X\textsuperscript{t} is provided to evaluate reconstruction performance of the convolutional auto-encoder and its category discrimination power.
+The labeled data set X<sup>t</sup> is provided to evaluate reconstruction performance of the convolutional auto-encoder and its category discrimination power.
 
-For reconstruction evaluation through human point of view, below codes select some samples of X\textsuperscript{t} and feed them to the trained convolutional auto-encder and show the outputs. Figure 1 shows some original and reconstructed images. 
+For reconstruction evaluation through human point of view, below codes select some samples of X<sup>t</sup> and feed them to the trained convolutional auto-encder and show the outputs. Figure 1 shows some original and reconstructed images. 
 
     # Image reconstruction using trained convolutional auto-encoder for 
     # representation learning evaluation with human point of view
@@ -161,7 +161,7 @@ FIGURE 1; Original images and respective reconstructed samples using Convolution
 
 The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
 
-To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs UMAP (...link...) and Figure 2 shows UMAP output of set X\textsuperscript{t}. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 
+To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs UMAP (...link...) and Figure 2 shows UMAP output of set X<sup>t</sup>. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 
 
     n_class = [0,1]
 
@@ -187,15 +187,14 @@ FIGURE 2; UMAP category representation (a 2D visualization of represented data)
 A rapid training process with less possible human efforts requires an uncertainty sampling method that focuses on discriminating samples (category boundaries) and selects the most uncertain samples for human judgments. 
 
 The uncertainty sampling step of current scheme is based on Query-By-Committee (QBC) principle, and we employed random forest as a committee of classifiers. Each tree in the random forest is a committee member and their outputs are used to estimate the Certainty Ratio
-\begin{equation}
-\label{eq:emc}
+
 CR > p,
-\end{equation}
+
 where $p$ is a certainty threshold value that is set by human operator (e,g 0.58). If the votes (CR) for category of a sample fall below the $p$ value, the class of the respective sample would asked from the operator.
 
 The on-line phase of the RHL algorithm consist of below steps:
 
-* Feature extraction of sets X\textsuperscript{s} and x\textsuperscript{l}
+* Feature extraction of sets X<sup>s</sup> and x<sup>l</sup>
 
       x_train_commit = encoder.predict(xl) # Employing encoder to extract featurs of Xl
       x_train_commit = np.reshape(x_train_commit,(np.shape(x_train_commit)[0],12*28*4))
@@ -224,10 +223,10 @@ The on-line phase of the RHL algorithm consist of below steps:
       queried_idxlist = []
       initial_index = 0
     
-* Initial training of random forest using x\textsuperscript{l}
+* Initial training of random forest using x<sup>l</sup>
 * Uncertainty sampling step;
-     Categorizing samples of X\textsuperscript{s}, or
-     If certainty threshold is not reached, ask category from the operator and add the labeled sample to set X\textsuperscript{q}.       * Retraining the random forest classifier with set X\textsuperscript{q}.
+     Categorizing samples of X<sup>s</sup>, or
+     If certainty threshold is not reached, ask category from the operator and add the labeled sample to set X<sup>q</sup>.              * Retraining the random forest classifier with set X<sup>q</sup>.
      
 Note that below code will display some previously queried samples by human operator. This enables the operator to have a glimpse on earlier samples and decide about new uncertain sample, or even change previous classifications if necessary. 
 
@@ -368,7 +367,7 @@ Note that below code will display some previously queried samples by human opera
         xu_CRF2 = np.delete(xu_CRF2,unlabeled_idx,axis=0) 
         initial_index = initial_index+1
         
-* Continue to categorization all the remaining samples of X\textsuperscript{s}
+* Continue to categorization all the remaining samples of X<sup>s</sup>
 
       #                               Test with remaining samples of Xs 
 
@@ -389,7 +388,7 @@ Note that below code will display some previously queried samples by human opera
 # 3- Final evaluations
 
 # 3.1- Uncertainty sampling evaluation
-To illustrate the performance of the uncertainty sampling, below code demonstrates the UMAP output of the X\textsuperscript{t}  data set together with the queried samples X\textsuperscript{q} (green stars). Considering the UMAP output, the uncertainty sampling selects instances close to category boundaries, so it  works very well. Figure 3 shows the UMAP output of sets X\textsuperscript{t} and X\textsuperscript{q}.
+To illustrate the performance of the uncertainty sampling, below code demonstrates the UMAP output of the X<sup>t</sup> data set together with the queried samples X<sup>q</sup> (green stars). Considering the UMAP output, the uncertainty sampling selects instances close to category boundaries, so it  works very well. Figure 3 shows the UMAP output of sets X<sup>t</sup> and X<sup>q</sup>.
 
     #                        UMAP visualization of Xt togather with Xq  
     
@@ -428,7 +427,7 @@ FIGURE 3; UMAP representation of selected uncertain samples and test data set
 
 
 # 3.2- Classifier evaluation
-To evaluate the performance of the classifier we used remaining samples of X\textsuperscript{s} with their ground truth labels. Below code predicts the labels of remaining X\textsuperscript{s} using trained classifier and shows the F1 score. 
+To evaluate the performance of the classifier we used remaining samples of X<sup>s</sup> with their ground truth labels. Below code predicts the labels of remaining X<sup>s</sup> using trained classifier and shows the F1 score. 
 
 --------------------------------------------------------------------------------------------------------------------------------
 

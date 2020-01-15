@@ -161,7 +161,7 @@ FIGURE 1; Original images and respective reconstructed samples using Convolution
 
 The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
 
-To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs UMAP (...link...) and Figure 2 shows UMAP output of set X<sup>t</sup>. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 
+To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs [UMAP](https://github.com/lmcinnes/umap) and Figure 2 shows UMAP output of set X<sup>t</sup>. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 
 
     n_class = [0,1]
 

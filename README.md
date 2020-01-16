@@ -184,7 +184,7 @@ The uncertainty sampling step of current scheme is based on Query-By-Committee (
 
 CR > p,
 
-where $p$ is a certainty threshold value that is set by human operator (e,g 0.58). If the votes (CR) for category of a sample fall below the $p$ value, the class of the respective sample would asked from the operator.
+where p is a certainty threshold value that is set by human operator (e,g 0.58). If the votes (CR) for category of a sample fall below the p value, the class of the respective sample would asked from the operator.
 
 The on-line phase of the RHL algorithm consist of below steps:
 

@@ -114,7 +114,7 @@ Below function shows the structure, parameters, optimiser and loss function of t
     # Training the network
     autoencoder.fit(Xu, Xu, batch_size=20,epochs=450, validation_split=0.1) 
     
-# 2.2.1- Demonstration and evaluation of power of representation learning
+# 2.2.1- Representation learning evaluation using human point of view
 The labeled data set X<sup>t</sup> is provided to evaluate the reconstruction performance of the convolutional auto-encoder and its category discrimination power.
 
 For reconstruction evaluation through human point of view, below codes select some samples of X<sup>t</sup> and feed them to the trained convolutional auto-encder and show the outputs. Figure 1 shows some original and reconstructed images. 
@@ -151,7 +151,7 @@ For reconstruction evaluation through human point of view, below codes select so
 ![](Images/Reconstructed.jpg)
 Figure 1; Original images and respective reconstructed samples using convolutional auto-encoder
 
-
+# 2.2.2- Representation learning evaluation using UMAP
 The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
 
 To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs [UMAP](https://github.com/lmcinnes/umap) and Figure 2 shows UMAP output of set X<sup>t</sup>. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 

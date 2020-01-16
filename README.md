@@ -36,7 +36,6 @@ We will discuss each step of RHL and present Python cods in detail in later sect
     from sklearn.metrics import f1_score
     from sklearn.metrics import confusion_matrix
     from sklearn import metrics
-    from copy import deepcopy
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.metrics import confusion_matrix,classification_report
     import seaborn as sns; sns.set()                        

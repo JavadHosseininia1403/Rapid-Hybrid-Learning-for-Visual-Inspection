@@ -219,7 +219,8 @@ The on-line phase of the RHL algorithm consist of below steps:
 * Initial training of random forest using x<sup>l</sup>
 * Uncertainty sampling step;
      * Categorizing samples of X<sup>s</sup>, or
-     * If certainty threshold is not reached, ask category from the operator and add the labeled sample to set X<sup>q</sup>.            * Retraining the random forest classifier with set X<sup>q</sup>.
+     * If certainty threshold is not reached, ask category from the operator and add the labeled sample to set X<sup>q</sup>.            
+ * Retraining the random forest classifier with set X<sup>q</sup>.
      
 Note that below code will display some previously queried samples by human operator. This enables the operator to have a glimpse on earlier samples and decide about new uncertain sample, or even change previous classifications if necessary. 
 

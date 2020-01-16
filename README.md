@@ -47,18 +47,14 @@ We will discuss each step of RHL and present Python cods in detail in later sect
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
     %matplotlib inline
 
-Based on industrial operation problem, we split whole 10 000 pencil slat samples to four separate data sets. Those are include (each one will describe later in relevant section) 
+Based on industrial operation problem, we split the whole 10 000 pencil slat samples to four separate data sets. Those are include (each one will describe later in relevant section) 
 
    * Less than 1000 unlabeled samples that selected among the majority class of data, X<sup>u</sup>.
    * 1000 labeled samples X<sup>t</sup> 
    * Small initial training set x<sup>l</sup> include 50 labeled samples. Two samples per each category will select in a random manner to establish the categories for classifier.  
    * 8 000 labeled instances as a stream of samples X<sup>s</sup> for uncertainty sampling / classification, and final evaluations.
 
-Each set of data is selected in a random manner and all are independent to each other. Below codes are used for importing data sets, extracting the red channel of images, normalizing, and preparing the shape of samples for convoutional auto-encoder.
-
-Import data sets.
-
-Below function converts original images to one-channel of normalized and reshaped images separatly for each one of dataset;
+Each set of data is selected in a random manner and all are independent to each other. Below function converts original images to one-channel of normalized and reshaped images separatly for each one of dataset;
 
     def convert_images(images, num_images, output_shape):
     
@@ -86,16 +82,14 @@ The main objective of the RHL is diminishing human involvements in training a vi
 
 In this step, the goal is learning data features and reconstructing the original inputs from the features, Then utilizing the encoder part of convolutional auto-encoder as a feature extractor to represent the data features in a low dimensional space. 
 
-This step of the algorithm is an unsupervised process, therefore we provided an unlabeled set of training samples (X<sup>u</sup>) that consist of 1000 samples which were selected from the majority class of data (both balanced and highly imbalanced data sets have been used in representation learning phase to analysis the penalty rate, Please see the original paper). Note that, based on the experiments, less than 1000 highly imbalanced training samples is enough for an efficient data representation and acceptable final accuracy, although it cause a minor penalty on the final accuracy.  
+This step of the algorithm is an unsupervised process, therefore we provided a set of training samples (X<sup>u</sup>) that consist of 1000 unlabeled samples which were selected from the majority class of data (both balanced and highly imbalanced data sets have been used in representation learning phase to analysis the penalty rate, Please see the original paper). Note that, based on the experiments, less than 1000 highly imbalanced training samples is enough for an efficient data representation and acceptable final accuracy, although it causes a minor penalty on the final accuracy.  
 
 In this phase, a feature extractor has been developed using the encoder part of convolutional auto-encoder. The feature extractor unit utilizes in both off-line (for evaluation of representation learning using X<sup>t</sup>) and on-line (for supervised learning and final evaluation) phases. 
 
-Below code shows the structure, parameters, optimiser and loss function of the employed convolutional auto-encoder;
+Below function shows the structure, parameters, optimiser and loss function of the employed convolutional auto-encoder;
 
     def create_autoencoder_model():
-        """
-        This function creates convolutional autoencoder model
-        """
+
         Input = layers.Input(shape=(48,112,1))
         conv1 = layers.Conv2D(8, 3 , activation='relu', padding='same', strides=2)(Input)
         conv2 = layers.Conv2D(4, 3 , activation='relu', padding='same', strides=1)(conv1)
@@ -122,7 +116,7 @@ Below code shows the structure, parameters, optimiser and loss function of the e
     autoencoder.fit(Xu, Xu, batch_size=20,epochs=450, validation_split=0.1) 
     
 # 2.2.1- Demonstration and evaluation of power of representation learning
-The labeled data set X<sup>t</sup> is provided to evaluate reconstruction performance of the convolutional auto-encoder and its category discrimination power.
+The labeled data set X<sup>t</sup> is provided to evaluate the reconstruction performance of the convolutional auto-encoder and its category discrimination power.
 
 For reconstruction evaluation through human point of view, below codes select some samples of X<sup>t</sup> and feed them to the trained convolutional auto-encder and show the outputs. Figure 1 shows some original and reconstructed images. 
 
@@ -156,7 +150,7 @@ For reconstruction evaluation through human point of view, below codes select so
         
 
 ![](Images/Reconstructed.jpg)
-Figure 1; Original images and respective reconstructed samples using Convolutional auto-encoder
+Figure 1; Original images and respective reconstructed samples using convolutional auto-encoder
 
 
 The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
@@ -179,12 +173,12 @@ To evaluate the discrimination power of the representation learning built with i
     plt.show() 
     
 ![](Images/Umap1.png)
-Figure 2; UMAP category representation (a 2D visualization of represented data)
+Figure 2; UMAP category representation (2D visualization of represented data)
 
 
 # 2.3- On-line supervised training with uncertainty sampling
 
-A rapid training process with less possible human efforts requires an uncertainty sampling method that focuses on discriminating samples (category boundaries) and selects the most uncertain samples for human judgments. 
+A rapid training process with less possible human involvements requires an uncertainty sampling method that focuses on discriminating samples (category boundaries) and selects the most uncertain samples for human judgments. 
 
 The uncertainty sampling step of current scheme is based on Query-By-Committee (QBC) principle, and we employed random forest as a committee of classifiers. Each tree in the random forest is a committee member and their outputs are used to estimate the Certainty Ratio
 
@@ -367,26 +361,11 @@ Note that below code will display some previously queried samples by human opera
         
 * Continue to categorization all the remaining samples of X<sup>s</sup>
 
-      #                               Test with remaining samples of Xs 
-
-      # Predicting labels of remaining samples of Xs using trained classifier
-      x_s_predicted = Models.predict_proba(X_stream) 
-      x_s_prob_predicted = (np.argmax(x_s_predicted, axis = 1))
-  
-      print (metrics.classification_report(y_stream, x_s_prob_predicted ))
-      confu_mat = confusion_matrix( y_stream, x_s_prob_predicted)
-
-      # Demonstrating the confusion matrix
-      plt.figure()
-      sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
-      plt.xlabel("true value")
-      plt.ylabel("predicted value")
-      plt.show()
 
 # 3- Final evaluations
 
 # 3.1- Uncertainty sampling evaluation
-To illustrate the performance of the uncertainty sampling, below code demonstrates the UMAP output of the X<sup>t</sup> data set together with the queried samples X<sup>q</sup> (green stars). Considering the UMAP output, the uncertainty sampling selects instances close to category boundaries, so it  works very well. Figure 3 shows the UMAP output of sets X<sup>t</sup> and X<sup>q</sup>.
+To illustrate the performance of the uncertainty sampling, below code demonstrates the UMAP output of the X<sup>t</sup> data set together with the queried samples X<sup>q</sup> (green stars). Considering the UMAP output, the uncertainty sampling selects instances close to category boundaries, therefore it  works very well. Figure 3 shows the UMAP output of sets X<sup>t</sup> and X<sup>q</sup>.
 
     #                        UMAP visualization of Xt togather with Xq  
     
@@ -445,9 +424,8 @@ To evaluate the performance of the classifier we used remaining samples of X<sup
       plt.show()
  
 # 3.3 Classifier analysis by visualising each sample
-We used the hover method to open each sample in the UMAP output and visualise the original image related to the sample. This has done to analysis samples that might be incorrectly categorized with classifier or even samples that might be incorrectly labeled with human. This solution enables operator to have more analysis on the outputs. 
+We used the hover method to open each sample in the UMAP output and visualise the original image related to the categorized sample. This has done to analysis samples that might be incorrectly categorized with classifier or even samples that might be incorrectly labeled with human. This solution enables operator to have more analysis on the outputs. 
 
- *** code
  
     def hover(event):
         # if the mouse is over the scatter points

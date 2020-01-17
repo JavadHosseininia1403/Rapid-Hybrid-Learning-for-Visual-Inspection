@@ -10,7 +10,6 @@ from keras import optimizers, losses
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
 from sklearn import metrics
-from copy import deepcopy
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import confusion_matrix,classification_report
 import seaborn as sns; sns.set()                        
@@ -24,7 +23,7 @@ from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 def convert_images(images, num_images, output_shape):
     """
-    This function converts original images to one-channel normalized and reshaped images
+    This function converts original images to one-channel of normalized and reshaped images
     """
     converted_images = []
     for i in range(num_images):
@@ -73,10 +72,8 @@ autoencoder.compile(keras.optimizers.Adam(), loss=keras.losses.MSE, metrics=[ "a
 autoencoder.fit(Xu, Xu, batch_size=20,epochs=450, validation_split=0.1) 
 
 #%%
-# Image reconstruction using trained convolutional auto-encoder for 
-# representation learning evaluation with human point of view
+# Image reconstruction using trained convolutional auto-encoder for representation learning evaluation with human point of view
 Reconstructs = autoencoder.predict(Xt)   #Images reconstruction
-#--------------------------------------------------------------------#
 
 for i in range (1):
     ind = np.random.choice(500)
@@ -118,11 +115,11 @@ plt.title('UMAP projection of dataset Xt', fontsize=16)
 plt.show()                 
                                     
 #%%
-                        ####                            ####
-                   ########                                ########
-########################   Query by committee of randome forests  #####################
-                  ########                                 #######
-                       ####                             ####
+                                        ####          On-line phase         ####
+                                  ########                                     ########
+########################################   Query by committee of randome forests  ################################################
+                                  ########                                    ########
+                                       ####                                 ####
 
 x_train_commit = encoder.predict(xl) # Employing encoder to extract featurs of Xl
 x_train_commit = np.reshape(x_train_commit,(np.shape(x_train_commit)[0],12*28*4))
@@ -143,8 +140,8 @@ X_for_display = np.reshape(Xs, (8000,48,112)) # Reshaping Xs samples to display 
 #%%
 n_class = [0,1]
 
-n_initialsample = 2 # Algorithm will select 2 sample per class in a random manner   
-n_query = 28
+n_initialsample = 2 # The algorithm will select 2 samples per class in a random manner   
+n_query = 28 # The algorithm will select 28 samples to query using uncertainty sampling  
 
 Xq = []
 yq = []
@@ -156,7 +153,7 @@ initial_index = 0
 while n_query >= 0:
         
     if initial_index == 0:
-        # Initial training data selection in a random manner
+        # Randomly sample selection for initial training 
         train_idx = []
         for K in range ((np.shape(n_class)[0])):
             i = 0
@@ -176,10 +173,9 @@ while n_query >= 0:
             train_idx1 = np.delete(train_idx1, z, axis = 0)
         train_idx = train_idx.astype(np.int32)
         
-        # Sellection of initial training samples
-        x_train_initial = x_train_commit[train_idx]  
-        # Label selection of initial training samples
-        y_train_initial = y_train_commit[train_idx]  
+        x_train_initial = x_train_commit[train_idx]   # Sellection of initial training samples
+
+        y_train_initial = y_train_commit[train_idx]   # Label selection of initial training samples
         
         # Removing selected (known) samples amonge Xl
         x_train_commit = np.delete(x_train_commit, train_idx, axis = 0)
@@ -289,41 +285,8 @@ while n_query >= 0:
     xu_CRF2 = np.delete(xu_CRF2,unlabeled_idx,axis=0) 
     initial_index = initial_index+1
 
-#%%
-#                                      Test the model with Xt 
-    
-x_test_predicted = Models.predict_proba(x_pool_test) # Predicting labels of Xt using trained classifier
-x_test_prob_predicted = (np.argmax(x_test_predicted, axis = 1))
-
-print (metrics.classification_report(y_pool_test, x_test_prob_predicted ))
-confu_mat = confusion_matrix( y_pool_test, x_test_prob_predicted)
-
-# Demonstrating the confusion matrix
-plt.figure()
-sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
-plt.xlabel("true value")
-plt.ylabel("predicted value")
-plt.show()
-
-#%%
-#                               Test with remaining samples of Xs 
-
-# Predicting labels of remaining samples of Xs using trained classifier
-x_s_predicted = Models.predict_proba(X_stream) 
-x_s_prob_predicted = (np.argmax(x_s_predicted, axis = 1))
-  
-print (metrics.classification_report(y_stream, x_s_prob_predicted ))
-confu_mat = confusion_matrix( y_stream, x_s_prob_predicted)
-
-# Demonstrating the confusion matrix
-plt.figure()
-sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
-plt.xlabel("true value")
-plt.ylabel("predicted value")
-plt.show()
-
 #%%                                    
-#                        UMAP visualization of Xt togather with Xq  
+#                                    UMAP visualization of Xt togather with Xq  
     
 x_train_list2 = x_train_initial
 x_train_list2 = np.array(x_train_list2)
@@ -355,8 +318,40 @@ plt.title('UMAP projection of Xt and Xq', fontsize=16)
 plt.plot(x_Quaried[:,0], x_Quaried[:,1], 'g*', scalex=None, scaley=None, data = None)
 
 plt.show()
-#%%
 
+#%%
+#                                               Test the model with Xt 
+    
+x_test_predicted = Models.predict_proba(x_pool_test) # Predicting labels of Xt using trained classifier
+x_test_prob_predicted = (np.argmax(x_test_predicted, axis = 1))
+
+print (metrics.classification_report(y_pool_test, x_test_prob_predicted ))
+confu_mat = confusion_matrix( y_pool_test, x_test_prob_predicted) # Demonstrating the confusion matrix
+
+plt.figure()
+sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
+plt.xlabel("true value")
+plt.ylabel("predicted value")
+plt.show()
+
+#%%
+#                                      Test the model with remaining samples of Xs 
+
+# Predicting labels of remaining samples of Xs using trained classifier
+x_s_predicted = Models.predict_proba(X_stream) 
+x_s_prob_predicted = (np.argmax(x_s_predicted, axis = 1))
+  
+print (metrics.classification_report(y_stream, x_s_prob_predicted ))
+confu_mat = confusion_matrix( y_stream, x_s_prob_predicted) # Demonstrating the confusion matrix
+
+plt.figure()
+sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
+plt.xlabel("true value")
+plt.ylabel("predicted value")
+plt.show()
+
+#%%
+#                                       Classifier analysis by visualising each sample
 def hover(event):
     # if the mouse is over the scatter points
     if points.contains(event)[0]:

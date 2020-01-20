@@ -284,6 +284,21 @@ while n_query >= 0:
     X_for_display = np.delete(X_for_display,unlabeled_idx, axis= 0)
     xu_CRF2 = np.delete(xu_CRF2,unlabeled_idx,axis=0) 
     initial_index = initial_index+1
+    
+#%%
+#                                               Test the model with Xt 
+    
+x_test_predicted = Models.predict_proba(x_pool_test) # Predicting labels of Xt using trained classifier
+x_test_prob_predicted = (np.argmax(x_test_predicted, axis = 1))
+
+print (metrics.classification_report(y_pool_test, x_test_prob_predicted ))
+confu_mat = confusion_matrix( y_pool_test, x_test_prob_predicted) # Demonstrating the confusion matrix
+
+plt.figure()
+sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
+plt.xlabel("true value")
+plt.ylabel("predicted value")
+plt.show()
 
 #%%                                    
 #                                    UMAP visualization of Xt togather with Xq  
@@ -317,21 +332,6 @@ plt.title('UMAP projection of Xt and Xq', fontsize=16)
 
 plt.plot(x_Quaried[:,0], x_Quaried[:,1], 'g*', scalex=None, scaley=None, data = None)
 
-plt.show()
-
-#%%
-#                                               Test the model with Xt 
-    
-x_test_predicted = Models.predict_proba(x_pool_test) # Predicting labels of Xt using trained classifier
-x_test_prob_predicted = (np.argmax(x_test_predicted, axis = 1))
-
-print (metrics.classification_report(y_pool_test, x_test_prob_predicted ))
-confu_mat = confusion_matrix( y_pool_test, x_test_prob_predicted) # Demonstrating the confusion matrix
-
-plt.figure()
-sns.heatmap(confu_mat.T, annot=True, fmt='d', cbar=True )
-plt.xlabel("true value")
-plt.ylabel("predicted value")
 plt.show()
 
 #%%

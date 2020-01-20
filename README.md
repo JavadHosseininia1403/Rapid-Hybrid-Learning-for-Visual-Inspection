@@ -1,15 +1,15 @@
 # Rapid-Hybrid-Learning-for-Visual-Inspection (RHL)
 # 1- Introduction
-Most of the natural material inspection systems suffer by frequently changes in visual appearance between batches of production. Moreover, there are some visual sorting problems that collecting and labeling numerous training samples require destructive tests. Thous problems are including wood strength estimation, metal ductility fracture prediction, prediction of structural failure (e.g. prediction of wind turbine emergency stop) and etc. Hence, training with a huge amount of labeled samples is not feasible from time and cost efficiency point of view. 
+Most of the natural material inspection systems suffer by frequent changes in visual appearance between batches of production. Moreover, there are some visual sorting problems that collecting and labeling numerous training samples require destructive tests. Thous problems are including wood strength estimation, metal ductility fracture prediction, prediction of structural failure (e.g. prediction of wind turbine emergency stop) and etc. Hence, training with a huge amount of labeled samples is not feasible from time and cost efficiency point of view. 
 
-The appearance variations of natural materials such as building stone tiles, wooden boards, and medical samples against the original training materials tend to decrease the classification performance. Repeatedly collecting and labeling complete representative sample sets is a tedious effort that usually limits the accuracy and consequently the efficiency of the visual inspection system. 
+The appearance variations of natural materials such as building stone tiles, wooden boards, and medical samples against the original training materials tend to decrease the classification performance. Also, repeatedly collecting and labeling complete representative sample sets is a tedious effort that usually limits the accuracy and consequently the efficiency of the visual inspection system. 
 
 Since labeling any training samples is an error-prone process and limits the performance of both supervised and semi-supervised learning schemes, categorizing training samples should be done after training feature representation phase. Therefore, the objective of devising RHL is category representation and dimension reduction in an unsupervised manner and diminishing the number of samples that need human judgment in a supervised training phase.
 
-This post is an explanation of the developed RHL which has been successfully applied in different visual inspection problems like pencil slat and medical fundus images classification. Detailed description and results can be found in the original paper (Rapid Hybrid Learning for Visual Inspection, the link will provide soon). Also, the pencil slat data set which consist of 10 000 ground truth labeled samples is available in this post. 
+This post is an explanation of the developed RHL which has been successfully applied in different visual inspection problems like pencil slat and medical fundus images classification. Detailed description and results can be found in the original paper (Rapid Hybrid Learning for Visual Inspection, the link will provide soon). Also, the pencil slat data set which consists of 10 000 ground truth labeled samples are available in this post. 
 
 # 2- How the RHL performs
-We implemented the RHL in two major phase. First; an off-line unsupervised approach to build a powerful representation and dimension reduction tool. Second; an on-line supervised classifier training approach by employing active learning with uncertainty sampling. The proposed approach enables classifier to learn the category distribution space incrementally with new critical samples (which are close to the category boundaries), while it is performing the classification process on stream of data.
+We implemented the RHL in two major phases. First; an off-line unsupervised approach to build a powerful representation and dimension reduction tool. Second; an on-line supervised classifier training approach by employing active learning with uncertainty sampling. The proposed approach enables classifier to learn the category distribution incrementally with new critical samples (which are close to the category boundaries), while it is performing the classification process on the stream of data.
 
 The developed algorithm of RHL consist of below steps.
 
@@ -17,13 +17,13 @@ The developed algorithm of RHL consist of below steps.
    * Representation learning using Convolutional Auto-Encoder (CAE)
    * Demonstration and evaluation of representation learning using human vision and UMAP
    * Initial training of the random forest classifier
-   * Uncertainty sampling, and classifying samples (with no uncertainty in category) in data stream 
+   * Uncertainty sampling and classifying samples (with no uncertainty in category) in the data stream 
    * Performance evaluation 
 
-We will discuss each step of RHL and present Python cods in detail in later sections
+We will discuss each step of RHL and present Python codes in detail in later sections
 
 # 2.1- Load and normalize data
- Some required packages will import using below cods;
+ Some required packages will import using below codes;
  
     from keras.models import Model
     import matplotlib.pyplot as plt 
@@ -46,14 +46,14 @@ We will discuss each step of RHL and present Python cods in detail in later sect
     from matplotlib.offsetbox import OffsetImage, AnnotationBbox
     %matplotlib inline
 
-Based on industrial operation problem, we split the whole 10 000 pencil slat samples to four separate data sets. Those are include (each one will describe later in relevant section) 
+Based on industrial operation problems, we split the whole 10 000 pencil slat samples to four separate data sets. Those include (each one will describe later in the relevant section) 
 
-   * Less than 1000 unlabeled samples that selected among the majority class of data, X<sup>u</sup>.
+   * Less than 1000 unlabeled samples that are selected among the majority class of data, X<sup>u</sup>.
    * 1000 labeled samples X<sup>t</sup> 
    * Small initial training set x<sup>l</sup> include 50 labeled samples. Two samples per each category will select in a random manner to establish the categories for classifier.  
    * 8 000 labeled instances as a stream of samples X<sup>s</sup> for uncertainty sampling / classification, and final evaluations.
 
-Each set of data is selected in a random manner and all are independent to each other. Below function converts original images to one-channel of normalized and reshaped images separatly for each one of dataset;
+Each set of data is selected in a random manner independent to each other. Below function converts original images to one-channel of normalized and reshaped images separately from each one of the datasets;
 
     def convert_images(images, num_images, output_shape):
     
@@ -77,13 +77,13 @@ Each set of data is selected in a random manner and all are independent to each 
         return converted_images
     
 # 2.2- Representation learning
-The main objective of the RHL is diminishing human involvements in training a visual inspection systems. Therefore, a convolutional auto-encoder has been used to learn data representation in an unsupervised manner.
+The main objective of the RHL is diminishing human involvements in training visual inspection systems. Therefore, a convolutional auto-encoder has been used to learn data representation in an unsupervised manner.
 
 In this step, the goal is learning data features and reconstructing the original inputs from the features, Then utilizing the encoder part of convolutional auto-encoder as a feature extractor to represent the data features in a low dimensional space. 
 
-This step of the algorithm is an unsupervised process, therefore we provided a set of training samples (X<sup>u</sup>) that consist of 1000 unlabeled samples which were selected from the majority class of data (both balanced and highly imbalanced data sets have been used in representation learning phase to analysis the penalty rate, Please see the original paper). Note that, based on the experiments, less than 1000 highly imbalanced training samples is enough for an efficient data representation and acceptable final accuracy, although it causes a minor penalty on the final accuracy.  
+This step of the algorithm is an unsupervised process, therefore we provided a set of training samples (X<sup>u</sup>) that consist of 1000 unlabeled samples which were selected from the majority class of data (both balanced and highly imbalanced data sets have been used in representation learning phase to analysis the penalty rate, Please see the original paper). Note that, based on the experiments, less than 1000 highly imbalanced training samples is enough for efficient data representation and acceptable final accuracy, although it causes a minor penalty on the final accuracy.  
 
-In this phase, a feature extractor has been developed using the encoder part of convolutional auto-encoder. The feature extractor unit utilizes in both off-line (for evaluation of representation learning using X<sup>t</sup>) and on-line (for supervised learning and final evaluation) phases. 
+In this phase, a feature extractor has been developed using the encoder part of convolutional auto-encoder. The feature extractor unit utilizes in both off-line (for evaluation of representation learning using X<sup>t</sup>) and on-line (for supervised learning and the final evaluation) phases. 
 
 Below function shows the structure, parameters, optimiser and loss function of the employed convolutional auto-encoder;
 
@@ -117,7 +117,7 @@ Below function shows the structure, parameters, optimiser and loss function of t
 # 2.2.1- Representation learning evaluation using human point of view
 The labeled data set X<sup>t</sup> is provided to evaluate the reconstruction performance of the convolutional auto-encoder and its category discrimination power.
 
-For reconstruction evaluation through human point of view, below codes select some samples of X<sup>t</sup> and feed them to the trained convolutional auto-encder and show the outputs. Figure 1 shows some original and reconstructed images. 
+For reconstruction evaluation through the human point of view, below codes select some samples of X<sup>t</sup> and feed them to the trained convolutional auto-encoder and show the outputs. Figure 1 shows some original and reconstructed images. 
 
     # Image reconstruction using trained convolutional auto-encoder for 
     # representation learning evaluation with human point of view
@@ -149,10 +149,10 @@ For reconstruction evaluation through human point of view, below codes select so
         
 
 ![](Images/Reconstructed.jpg)
-Figure 1; Original images and respective reconstructed samples using convolutional auto-encoder
+Figure 1; Original and reconstructed samples using convolutional auto-encoder
 
 # 2.2.2- Representation learning evaluation using UMAP
-The classifier training phase and final accuracy are highly relying to the extracted features. So, validation of the discriminant power of the convolutional auto-encoder is very important.
+The classifier training phase and final accuracy are highly relying on the extracted features. So, the validation step of the discriminant power of the convolutional auto-encoder is very important.
 
 To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs [UMAP](https://github.com/lmcinnes/umap) and Figure 2 shows UMAP output of set X<sup>t</sup>. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 
 
@@ -179,11 +179,11 @@ Figure 2; UMAP category representation (2D visualization of represented data)
 
 A rapid training process with less possible human involvements requires an uncertainty sampling method that focuses on discriminating samples (category boundaries) and selects the most uncertain samples for human judgments. 
 
-The uncertainty sampling step of current scheme is based on Query-By-Committee (QBC) principle, and we employed random forest as a committee of classifiers. Each tree in the random forest is a committee member and their outputs are used to estimate the Certainty Ratio
+The uncertainty sampling step of the current scheme is based on Query-By-Committee (QBC) principle, and we employed random forest as a committee of classifiers. Each tree in the random forest is a committee member and their outputs are used to estimate the Certainty Ratio
 
 CR > p,
 
-where p is a certainty threshold value that is set by human operator (e,g 0.58). If the votes (CR) for category of a sample fall below the p value, the class of the respective sample would asked from the operator.
+where p is a certainty threshold value that is set by a human operator (e,g 0.58). If the votes (CR) for the category of a sample fall below the p value, the class of the respective sample shuld ask from the operator.
 
 The on-line phase of the RHL algorithm consist of below steps:
 
@@ -222,7 +222,7 @@ The on-line phase of the RHL algorithm consist of below steps:
      * If certainty threshold is not reached, ask category from the operator and add the labeled sample to set X<sup>q</sup>.            
  * Retraining the random forest classifier with set X<sup>q</sup>.
      
-Note that below code will display some previously queried samples by human operator. This enables the operator to have a glimpse on earlier samples and decide about new uncertain sample, or even change previous classifications if necessary. 
+Note that below code will display some previously queried samples by a human operator. This enables the operator to have a glimpse on earlier samples and decide about the new uncertain sample, or even change previous classifications if necessary. 
 
     while n_query >= 0:
         
@@ -423,8 +423,8 @@ To evaluate the performance of the classifier we used remaining samples of X<sup
       plt.ylabel("predicted value")
       plt.show()
  
-# 3.3 Classifier analysis by visualising each sample
-We used the hover method to open each sample in the UMAP output and visualise the original image related to the categorized sample. This has done to analysis samples that might be incorrectly categorized with classifier or even samples that might be incorrectly labeled with human. This solution enables operator to have more analysis on the outputs. 
+# 3.3 Further analysis on Classifier by visualising each sample
+We used the hover method to open each sample in the UMAP output and visualise the original image related to the categorized sample. This has done to analysis samples that might be incorrectly categorized with the classifier or even samples that might be incorrectly labeled with the human operator. This solution enables the operator to have more analysis on the outputs. 
 
  
     def hover(event):
@@ -481,6 +481,6 @@ We used the hover method to open each sample in the UMAP output and visualise th
     %matplotlib inline
 
 ![](Images/RFErrors.png)
-Figure 4; RF errors; a; Wrong assigned class for defected sample, b; Wrong  assigned class for defectless sample
+Figure 4; RF errors; a; Wrong assigned class for defected sample, b; Wrong assigned class for defectless sample
 
 

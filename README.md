@@ -152,7 +152,7 @@ For reconstruction evaluation through the human point of view, below codes selec
 Figure 1; Original and reconstructed samples using convolutional auto-encoder
 
 # 2.2.2- Representation learning evaluation using UMAP
-The classifier training phase and final accuracy are highly relying on the extracted features. So, the validation step of the discriminant power of the convolutional auto-encoder is very important.
+The classifier training phase and final accuracy are highly relied on the extracted features. So, the validation step of the discriminant power of the convolutional auto-encoder is very important.
 
 To evaluate the discrimination power of the representation learning built with imbalanced data, bellow code employs [UMAP](https://github.com/lmcinnes/umap) and Figure 2 shows UMAP output of set X<sup>t</sup>. Note that, in case of a weak representation learning, different categories are merged together and it is not possible to conclude a discriminating boundary from represented categories. 
 

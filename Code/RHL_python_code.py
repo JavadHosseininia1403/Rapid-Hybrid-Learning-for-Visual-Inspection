@@ -10,7 +10,7 @@ from keras import optimizers, losses
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
 from sklearn import metrics
-from sklearn.ensemble import RandomForestClassifier
+.
 from sklearn.metrics import confusion_matrix,classification_report
 import seaborn as sns; sns.set()                        
 from keras.utils import np_utils
@@ -181,10 +181,10 @@ while n_query >= 0:
         x_train_commit = np.delete(x_train_commit, train_idx, axis = 0)
         y_train_commit = np.delete(y_train_commit, train_idx, axis = 0)
                     
-    RF_model = RandomForestClassifier(n_estimators = 500)     # Initializing the random forest
-    Models = RF_model.fit(x_train_initial, y_train_initial)   # Training the model
+    GBM_model = RandomForestClassifier(n_estimators = 500)     # Initializing the gradient boosting machine classifier
+    Models = GBM_model.fit(x_train_initial, y_train_initial)   # Training the model
         
-    y_rf_pred = RF_model.predict(x_pool_test)   # Label prediction of xt samples
+    y_rf_pred = GBM_model.predict(x_pool_test)   # Label prediction of xt samples
     print ("\nThe confusion matrix after retraining\n")
     print (metrics.classification_report(y_pool_test, y_rf_pred )) # Demonstrating the confusion matrix 
 
@@ -322,7 +322,7 @@ y_Quaried = y_train_list2[1000:1040]
 
 plt.figure()
 fig = plt.figure(figsize=(10,6))
-y_test_pool_pred = RF_model.predict(x_pool_test) # Predicting labels of the set Xt
+y_test_pool_pred = GBM_model.predict(x_pool_test) # Predicting labels of the set Xt
 
 plt.scatter(embedding_test1[:, 0], embedding_test1[:, 1], c=y_train_list2, 
                         cmap='Spectral', s=3)

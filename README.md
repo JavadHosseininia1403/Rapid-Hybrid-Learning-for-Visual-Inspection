@@ -32,6 +32,7 @@ We will discuss each step of RHL and present Python codes in detail in later sec
     import keras
     from keras import layers
     import cv2
+    from sklearn.ensemble import GradientBoostingClassifier
     from keras import optimizers, losses
     from sklearn.metrics import f1_score
     from sklearn.metrics import confusion_matrix
@@ -255,7 +256,9 @@ Note that below code will display some previously queried samples by a human ope
             x_train_commit = np.delete(x_train_commit, train_idx, axis = 0)
             y_train_commit = np.delete(y_train_commit, train_idx, axis = 0)
                     
-        GBM_model = RandomForestClassifier(n_estimators = 500)     # Initializing the gradient boosting machine classifier
+        GBM_model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.02,
+                    max_features= "sqrt", max_depth=2, random_state=0) # Initializing the gradient boosting machine classifier
+        
         Models = GBM_model.fit(x_train_initial, y_train_initial)   # Training the model
         
         y_rf_pred = GBM_model.predict(x_pool_test)   # Label prediction of xt samples
@@ -387,7 +390,7 @@ To illustrate the performance of the uncertainty sampling, below code demonstrat
 
     plt.figure()
     fig = plt.figure(figsize=(10,6))
-    y_test_pool_pred = RF_model.predict(x_pool_test) # Predicting labels of the set Xt
+    y_test_pool_pred = GBM_model.predict(x_pool_test) # Predicting labels of the set Xt
 
     plt.scatter(embedding_test1[:, 0], embedding_test1[:, 1], c=y_train_list2, 
                         cmap='Spectral', s=3)

@@ -255,10 +255,10 @@ Note that below code will display some previously queried samples by a human ope
             x_train_commit = np.delete(x_train_commit, train_idx, axis = 0)
             y_train_commit = np.delete(y_train_commit, train_idx, axis = 0)
                     
-        RF_model = RandomForestClassifier(n_estimators = 500)     # Initializing the random forest
-        Models = RF_model.fit(x_train_initial, y_train_initial)   # Training the model
+        GBM_model = RandomForestClassifier(n_estimators = 500)     # Initializing the gradient boosting machine classifier
+        Models = GBM_model.fit(x_train_initial, y_train_initial)   # Training the model
         
-        y_rf_pred = RF_model.predict(x_pool_test)   # Label prediction of xt samples
+        y_rf_pred = GBM_model.predict(x_pool_test)   # Label prediction of xt samples
         print ("\nThe confusion matrix after retraining\n")
         print (metrics.classification_report(y_pool_test, y_rf_pred )) # Demonstrating the confusion matrix 
 

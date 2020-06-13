@@ -10,7 +10,7 @@ from keras import optimizers, losses
 from sklearn.metrics import f1_score
 from sklearn.metrics import confusion_matrix
 from sklearn import metrics
-.
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import confusion_matrix,classification_report
 import seaborn as sns; sns.set()                        
 from keras.utils import np_utils
@@ -117,7 +117,7 @@ plt.show()
 #%%
                                         ####          On-line phase         ####
                                   ########                                     ########
-########################################   Query by committee of randome forests  ################################################
+########################################         Query by committee of GBM        ################################################
                                   ########                                    ########
                                        ####                                 ####
 
@@ -181,7 +181,8 @@ while n_query >= 0:
         x_train_commit = np.delete(x_train_commit, train_idx, axis = 0)
         y_train_commit = np.delete(y_train_commit, train_idx, axis = 0)
                     
-    GBM_model = RandomForestClassifier(n_estimators = 500)     # Initializing the gradient boosting machine classifier
+    GBM_model = GradientBoostingClassifier(n_estimators=100, learning_rate=0.02,
+                                         max_features= "sqrt", max_depth=2, random_state=0)     # Initializing the gradient boosting machine classifier
     Models = GBM_model.fit(x_train_initial, y_train_initial)   # Training the model
         
     y_rf_pred = GBM_model.predict(x_pool_test)   # Label prediction of xt samples

@@ -178,7 +178,7 @@ Figure 2; UMAP category representation (2D visualization of represented data)
 
 A rapid training process with less possible human involvements requires an uncertainty sampling method that focuses on discriminating samples (category boundaries) and selects the most uncertain samples for human judgments. 
 
-The uncertainty sampling step of the current scheme is based on Query-By-Committee (QBC) principle, and we employed random forest as a committee of classifiers. Each tree in the random forest is a committee member and their outputs are used to estimate the Certainty Ratio
+The uncertainty sampling step of the current scheme is based on Query-By-Committee (QBC) principle, and we employed gradient boosting machine as a committee of classifiers. Each tree in the classifier is a committee member and their outputs are used to estimate the Certainty Ratio
 
 CR > p,
 
@@ -215,11 +215,11 @@ The on-line phase of the RHL algorithm consist of below steps:
       queried_idxlist = []
       initial_index = 0
     
-* Initial training of random forest using x<sup>l</sup>
+* Initial training of gradient boosting machine using x<sup>l</sup>
 * Uncertainty sampling step;
      * Categorizing samples of X<sup>s</sup>, or
      * If certainty threshold is not reached, ask category from the operator and add the labeled sample to set X<sup>q</sup>.            
- * Retraining the random forest classifier with set X<sup>q</sup>.
+ * Retraining the gradient boosting machine classifier with set X<sup>q</sup>.
      
 Note that below code will display some previously queried samples by a human operator. This enables the operator to have a glimpse on earlier samples and decide about the new uncertain sample, or even change previous classifications if necessary. 
 
@@ -480,6 +480,6 @@ We used the hover method to open each sample in the UMAP output and visualise th
     %matplotlib inline
 
 ![](Images/RFErrors.png)
-Figure 4; RF errors; a; Wrong assigned class for defected sample, b; Wrong assigned class for defectless sample
+Figure 4; GBM errors; a; Wrong assigned class for defected sample, b; Wrong assigned class for defectless sample
 
 

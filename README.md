@@ -16,7 +16,7 @@ The developed algorithm of RHL consist of below steps.
    * Loading and normalizing data
    * Representation learning using Convolutional Auto-Encoder (CAE)
    * Demonstration and evaluation of representation learning using human vision and UMAP
-   * Initial training of the random forest classifier
+   * Initial training of the gradient boosting machine classifier
    * Uncertainty sampling and classifying samples (with no uncertainty in category) in the data stream 
    * Performance evaluation 
 
@@ -36,7 +36,6 @@ We will discuss each step of RHL and present Python codes in detail in later sec
     from sklearn.metrics import f1_score
     from sklearn.metrics import confusion_matrix
     from sklearn import metrics
-    from sklearn.ensemble import RandomForestClassifier
     from sklearn.metrics import confusion_matrix,classification_report
     import seaborn as sns; sns.set()                        
     from keras.utils import np_utils
